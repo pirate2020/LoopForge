@@ -13,8 +13,8 @@ function accessMcpAgentPrompt(spec,base,token){
   if(!token||token==='<YOUR_PERSONAL_TOKEN>')return '';
   const guide = `${base}/mcp-setup.txt`;
   const instructions = window.lfT(
-    `请为 ${spec.label} 接入 LoopForge 平台 MCP。使用 curl 下载 ${guide}（禁止使用 fetch），按指南中 ${spec.label} 的步骤配置，最后用 tools/list 验证连接。`,
-    `Connect ${spec.label} to the LoopForge platform MCP server. Download ${guide} with curl, follow the steps for ${spec.label}, then verify the connection with tools/list.`
+    `请为 ${spec.label} 接入 Agent 编排平台 MCP。使用 curl 下载 ${guide}（禁止使用 fetch），按指南中 ${spec.label} 的步骤配置，最后用 tools/list 验证连接。`,
+    `Connect ${spec.label} to the Agent Orchestration Platform MCP server. Download ${guide} with curl, follow the steps for ${spec.label}, then verify the connection with tools/list.`
   );
   return `${instructions}\n\nAPI_TOKEN = ${token}\nENDPOINT = ${base}/mcp`;
 }
@@ -126,7 +126,7 @@ function accessTokenSetupHTML(token){
     <div class="token-setup-layout">
       <div class="token-setup-intro">
         <div class="token-created">${huiIcon('check')}访问密钥已创建</div>
-        <h2 id="token-setup-title" tabindex="-1">连接 LoopForge 平台 MCP</h2>
+        <h2 id="token-setup-title" tabindex="-1">连接 Agent 编排平台 MCP</h2>
         <p>接入后，可以在 AI 对话里查询项目、需求和运行进度。</p>
         <fieldset class="token-client-picker">
           <legend>选择 AI 客户端</legend>
@@ -144,7 +144,7 @@ function accessTokenSetupHTML(token){
       </div>
       <div class="token-setup-action">
         <div class="token-connection" aria-hidden="true">
-          <span class="token-connection-mark"><img src="/images/loopforge-logo.png" width="28" height="28" alt=""></span>
+          <span class="token-connection-mark">${huiIcon('workflow')}</span>
           <span class="token-connection-link">${huiIcon('connector')}</span>
           <span class="token-connection-mark"><img id="token-connection-client" class="token-client-icon" width="23" height="23" alt=""></span>
         </div>

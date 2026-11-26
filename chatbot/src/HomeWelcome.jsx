@@ -1,5 +1,4 @@
 import React, { useId } from "react";
-import HomeLogo from "./HomeLogo";
 import "./home-welcome.css";
 
 const subtitle = "把想法，变成下一步。";
@@ -47,11 +46,10 @@ export default function HomeWelcome() {
   return (
     <div className="welcome home-welcome">
       <div className="home-welcome-lockup">
-        <HomeLogo />
         <div className="home-welcome-copy">
           <h1 className="home-welcome-title">
-            <span className="home-welcome-title-ink">LoopForge</span>
-            <span className="home-welcome-title-light" aria-hidden="true">LoopForge</span>
+            <span className="home-welcome-title-ink">FLY Agent 编排平台</span>
+            <span className="home-welcome-title-light" aria-hidden="true">FLY Agent 编排平台</span>
             <TitleSweep />
           </h1>
           <p className="home-welcome-subtitle">

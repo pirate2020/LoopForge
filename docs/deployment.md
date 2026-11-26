@@ -152,9 +152,9 @@ SSH handles clone, fetch and push. A conversation delivery returns the branch an
 
 ## Accounts
 
-The first account created in the browser becomes the platform administrator. After that, anyone who can reach the login page may sign up as a regular user while `AGENTFLOW_ALLOW_SIGNUP` is `true` (the default). Registered users can create requirements and run SOPs on your workers, so set `AGENTFLOW_ALLOW_SIGNUP=false` for any installation reachable from untrusted networks and create accounts explicitly instead.
+The first platform account created through password or OAuth2 becomes the platform administrator. A gateway-created identity never receives that role implicitly; grant it with `AGENTFLOW_PLATFORM_ADMINS`. After that, anyone who can reach the login page may sign up as a regular user while `AGENTFLOW_ALLOW_SIGNUP` is `true` (the default). Registered users can create requirements and run SOPs on your workers, so set `AGENTFLOW_ALLOW_SIGNUP=false` for any installation reachable from untrusted networks and create accounts explicitly instead.
 
-Platform administrators create accounts under **Platform administration → Member accounts** (平台管理 → 成员账号): enter a login name and an initial password, optionally grant administration, and hand the password to the teammate. The same page lists every account and resets the password of a password account; accounts that sign in through GitHub or a gateway cannot be given a password there. New accounts join the welcome project, like self sign-ups.
+Platform administrators create accounts under **Platform administration → Member accounts** (平台管理 → 成员账号): enter a login name and an initial password, optionally grant administration, and hand the password to the teammate. The same page lists every account and resets the password of a password account; accounts without a platform password, such as those created through GitHub, a gateway or OAuth2 auto-provisioning, cannot be given a password there. New accounts join the welcome project, like self sign-ups.
 
 LoopForge assumes a trusted team. Every signed-in account can list all projects, requirements and runs. Project settings and repositories can be changed only by the project owner or a platform administrator, and personal credentials only by their owner. Do not use one installation to separate untrusted tenants.
 
@@ -168,6 +168,54 @@ unset account_password
 ```
 
 Use `-admin` only when granting platform administration. Running the command again rotates that account's password. Password hashes use bcrypt. Browser sessions use signed HttpOnly, SameSite cookies and expire after seven days. No named person receives an implicit administrator role; additional administrators can be managed through the existing platform administration UI.
+
+### OAuth 2.0 single sign-on
+
+LoopForge can sign users in through a generic OAuth 2.0 authorization-code provider, such as an internal IAM, Keycloak, Microsoft Entra ID, or Okta. The login page shows **Continue with IAM** only when the application is fully configured; username/password login remains available.
+
+Register `<public-url>/api/auth/iam/callback` as the redirect URI of the OAuth2 application, then add the settings to `.env`:
+
+| Setting | Meaning |
+| --- | --- |
+| `AGENTFLOW_IAM_AUTHORIZE_URL` | Authorization endpoint. |
+| `AGENTFLOW_IAM_TOKEN_URL` | Token endpoint. |
+| `AGENTFLOW_IAM_USERINFO_URL` | JSON userinfo endpoint, called with the access token as a Bearer credential. |
+| `AGENTFLOW_IAM_CLIENT_ID` / `AGENTFLOW_IAM_CLIENT_SECRET` | Application credentials. Both are required; the platform acts as a confidential client. |
+| `AGENTFLOW_IAM_SCOPES` | Space- or comma-separated scopes; empty omits the `scope` parameter. |
+| `AGENTFLOW_IAM_REDIRECT_URL` | Fixed public callback. Recommended behind a reverse proxy; otherwise it is derived from the request host and `X-Forwarded-Proto`. |
+| `AGENTFLOW_IAM_PROVIDER_NAME` | Label on the login button, `IAM` by default. |
+| `AGENTFLOW_IAM_SUBJECT_CLAIM` | Stable identity claim, `sub` by default. |
+| `AGENTFLOW_IAM_LOGIN_CLAIM` | Platform login claim, `preferred_username` by default. |
+| `AGENTFLOW_IAM_NAME_CLAIM` | Display-name claim, `name` by default. |
+| `AGENTFLOW_IAM_TOKEN_AUTH_METHOD` | `client_secret_basic` (default) or `client_secret_post`. |
+| `AGENTFLOW_IAM_AUTO_PROVISION` | `signup` (default), `always`, or `never`; see below. |
+| `AGENTFLOW_IAM_LINK_EXISTING` | Bind an OAuth2 identity to an existing platform account with the same normalized login name; `true` by default. |
+
+The flow uses the authorization-code grant with a client secret, a signed `state`, and a short-lived HttpOnly state cookie. The callback must be a top-level GET back to the platform; `form_post` response mode is not supported. The callback must return to the same host that started the login. Behind HTTPS set `AGENTFLOW_SECURE_COOKIES=true`. This OAuth2 integration is separate from the legacy enterprise SSO redirect (`AGENTFLOW_SSO_*`); when that redirect is configured, it keeps precedence and the login page is not shown.
+
+`AGENTFLOW_IAM_AUTO_PROVISION` controls account creation:
+
+- `signup` (default): a new OAuth2 identity creates a platform account only while `AGENTFLOW_ALLOW_SIGNUP` is on. When registration is off, only the first platform account may still be created through OAuth2 so a closed deployment can bootstrap. An identity whose login name matches an existing platform account is bound to that account instead of creating a second one. Set `always` when OAuth2 membership alone should grant access; password self-registration stays off either way.
+- `always`: OAuth2 membership is the access gate, regardless of `AGENTFLOW_ALLOW_SIGNUP`.
+- `never`: only identities already linked to a platform account can sign in. It also disables binding an existing unlinked account by login name. Mappings are created by a previous auto-provisioning login; there is no separate binding UI yet.
+- `AGENTFLOW_IAM_LINK_EXISTING=false` (default `true`) rejects a login-name collision instead of binding the existing account. `never` always rejects it.
+
+The first platform account created through password or OAuth2 becomes the platform administrator; a gateway-created identity never receives that role implicitly. The OAuth2 login name is normalized to 2–64 characters from `[A-Za-z0-9_.-]`. If it matches an existing platform account that is not already bound to a different OAuth2 identity, the OAuth2 subject is bound to that account and signs in as it. The account keeps its platform role, display name, password, personal credentials and API tokens. This makes the configured login claim authoritative for pre-created accounts: use a stable, unique, administrator-controlled claim (for example `preferred_username` or an employee ID) and make sure OAuth2 users cannot change it to another employee's login. An account already bound to a different OAuth2 subject is never taken over. Use `AGENTFLOW_PLATFORM_ADMINS` to grant platform administration explicitly when needed. OAuth2 group or role claims are not mapped to platform roles. Logout clears the LoopForge session only; it does not end the OAuth2 session at the provider.
+
+The `user_external_identities` table is created by the startup incremental DDL. `migrations/041_user_external_identities.sql` is only for operators who pre-create the baseline schema of an external MySQL database.
+
+```dotenv
+AGENTFLOW_IAM_AUTHORIZE_URL=https://iam.example.com/oauth2/authorize
+AGENTFLOW_IAM_TOKEN_URL=https://iam.example.com/oauth2/token
+AGENTFLOW_IAM_USERINFO_URL=https://iam.example.com/oauth2/userinfo
+AGENTFLOW_IAM_CLIENT_ID=loopforge
+AGENTFLOW_IAM_CLIENT_SECRET=replace-with-the-application-secret
+AGENTFLOW_IAM_SCOPES="openid profile email"
+AGENTFLOW_IAM_REDIRECT_URL=https://loopforge.example.com/api/auth/iam/callback
+AGENTFLOW_IAM_PROVIDER_NAME=企业 IAM
+AGENTFLOW_IAM_AUTO_PROVISION=signup
+AGENTFLOW_IAM_LINK_EXISTING=true
+```
 
 ## Workers and runners
 
@@ -199,7 +247,9 @@ For an external MySQL deployment, review that migration and check column existen
 | --- | --- | --- |
 | Already applied by the installer and `./start.sh pull` | `001_run_obs_generated_columns.sql`, `migrations/seed/*.sql`, `031_generic_backend_openssh.sql`, `033_generic_sop_mr_node.sql`, `038_generic_sop_host_credentials.sql` | Nothing; the script above covers it |
 | Required upgrade migrations | `009_bot_interactions_utf8mb4.sql`, `036_git_http_credentials.sql` | Follow each migration's timing and prerequisites. [Migrating existing GitHub credentials](#migrating-existing-github-credentials) |
-| Optional backfills and rewrites of existing rows | `016_public_optional_repositories.sql`, `021_assistant_session_sources.sql` | Run them if the installation needs the converted rows |
+| Optional backfills and rewrites of existing rows | `016_public_optional_repositories.sql`, `021_assistant_session_sources.sql`, `042_rebrand_agent_platform.sql` | Run them if the installation needs the converted rows or the seeded catalog rebrand |
+
+Migration scripts contain Chinese literals. Run them through a UTF-8 client (for example `mysql --default-character-set=utf8mb4`) rather than a PowerShell pipeline or a GUI that re-encodes the file. If `042_rebrand_agent_platform.sql` was applied through a non-UTF-8 client and wrote mojibake, run `043_fix_rebrand_mojibake.sql`; it is ASCII-only and repairs the known Latin-1, CP1252 and GBK variants without touching unrelated Chinese content.
 
 ## Updating existing public SOPs
 

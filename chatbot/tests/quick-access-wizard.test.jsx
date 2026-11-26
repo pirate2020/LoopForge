@@ -351,7 +351,7 @@ describe("QuickAccessWizard", () => {
 
 describe("QuickAccessWizard repository permission (#122)", () => {
   const welcome = {
-    id: "welcome", key: "WELCOME", name: "LoopForge 体验项目", ownerId: 99,
+    id: "welcome", key: "WELCOME", name: "体验项目", ownerId: 99,
     members: [{ userId: 1, role: "member" }], workflowId: "generic-backend-delivery",
   };
   const member = { ...user, isPlatformAdmin: false };
@@ -418,7 +418,7 @@ describe("QuickAccessWizard repository permission (#122)", () => {
     await userAction.click(screen.getByRole("button", { name: "跳过绑定，继续体验" }));
     await userAction.click(screen.getByRole("button", { name: "下一步" }));
     await screen.findByText("默认角色与 SOP", { selector: "h3" });
-    expect(screen.getByText(/使用已有项目「LoopForge 体验项目」/)).toBeInTheDocument();
+    expect(screen.getByText(/使用已有项目「体验项目」/)).toBeInTheDocument();
     expect(screen.queryByText(/绑定 repo/)).toBeNull();
     await userAction.click(screen.getByRole("button", { name: "完成接入" }));
     expect(await screen.findByText("快速接入已完成")).toBeInTheDocument();

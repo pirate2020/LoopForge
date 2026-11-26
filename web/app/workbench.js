@@ -1945,14 +1945,14 @@ async function loadPlatformAccounts(host){
     if(!rows.length){list.innerHTML=`<div class="platform-empty-state"><b>${accounts.length?'没有匹配的账号':'还没有账号'}</b></div>`;return}
     list.innerHTML=rows.map(a=>{
       const name=a.chineseName&&a.chineseName.toLowerCase()!==String(a.loginName).toLowerCase()?`${a.loginName}(${a.chineseName})`:a.loginName;
-      const badges=[a.admin?'<span class="platform-source-badge source-builtin">平台管理员</span>':'',a.password?'<span class="platform-source-badge source-default">用户名密码</span>':'<span class="platform-source-badge source-default">GitHub / 网关登录</span>',a.codeBuddyApiKeyConfigured?'<span class="platform-source-badge source-env">已配 CodeBuddy Key</span>':'<span class="platform-source-badge source-default">未配 CodeBuddy Key</span>'].join('');
+      const badges=[a.admin?'<span class="platform-source-badge source-builtin">平台管理员</span>':'',a.password?'<span class="platform-source-badge source-default">用户名密码</span>':'<span class="platform-source-badge source-default">GitHub / 网关 / SSO 登录</span>',a.codeBuddyApiKeyConfigured?'<span class="platform-source-badge source-env">已配 CodeBuddy Key</span>':'<span class="platform-source-badge source-default">未配 CodeBuddy Key</span>'].join('');
       const editing=resetting===a.userId;
       return `<div class="platform-admin-row platform-account-row" data-account-row="${Number(a.userId)}">
         <div class="platform-admin-user">
           <div class="platform-admin-avatar">${userAvatarHTML(a.loginName,100)}</div>
           <div class="platform-admin-info"><span class="platform-admin-name" data-i18n-skip>${escapeHTML(name)}</span><div class="platform-admin-meta">${badges}</div></div>
         </div>
-        <div class="platform-admin-actions">${a.password?(editing?`<form class="platform-account-reset" data-reset-form="${Number(a.userId)}"><input name="password" placeholder="新密码，至少 6 位" aria-label="新密码" maxlength="72" autocomplete="new-password" spellcheck="false"><button type="button" class="button ghost small" data-reset-generate>随机</button><button type="submit" class="button primary small">确认重置</button><button type="button" class="button ghost small" data-reset-cancel>取消</button></form>`:`<button type="button" class="button ghost small" data-reset-account="${Number(a.userId)}">重置密码</button>`):'<span class="platform-locked-tag" title="通过 GitHub 或网关登录的账号没有平台密码">无平台密码</span>'}</div>
+        <div class="platform-admin-actions">${a.password?(editing?`<form class="platform-account-reset" data-reset-form="${Number(a.userId)}"><input name="password" placeholder="新密码，至少 6 位" aria-label="新密码" maxlength="72" autocomplete="new-password" spellcheck="false"><button type="button" class="button ghost small" data-reset-generate>随机</button><button type="submit" class="button primary small">确认重置</button><button type="button" class="button ghost small" data-reset-cancel>取消</button></form>`:`<button type="button" class="button ghost small" data-reset-account="${Number(a.userId)}">重置密码</button>`):'<span class="platform-locked-tag" title="通过 GitHub、网关或 SSO 登录的账号没有平台密码">无平台密码</span>'}</div>
       </div>`;
     }).join('');
     list.querySelectorAll('[data-reset-account]').forEach(btn=>btn.onclick=()=>{resetting=Number(btn.dataset.resetAccount);render();list.querySelector('[data-reset-form] input')?.focus()});
@@ -2367,7 +2367,7 @@ function renderUserProfilePopover() {
         </div>
         <div class="upp-info-item">
           <span class="upp-label">认证方式</span>
-          <span class="upp-value">LoopForge 本地账号</span>
+          <span class="upp-value">本地账号</span>
         </div>
       </div>
       <div class="upp-divider"></div>

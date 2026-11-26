@@ -143,7 +143,7 @@ describe("splitSidebarSections with SOP run conversations", () => {
 
   test("a search still finds a hidden run, by its title or its SOP", () => {
     const hidden = run("r1", {
-      title: "通用后端交付 SOP（LoopForge）",
+      title: "通用后端交付 SOP（Agent 编排平台）",
       displayTitle: "#7 修复登录失败",
       sopName: "通用后端交付",
     });

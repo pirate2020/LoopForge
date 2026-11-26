@@ -57,7 +57,7 @@ function reset(type, data) {
 // ---------- Cards: three share states, no actions on the card ----------
 reset('rules', {
   rules: [
-    { id: 'core', name: 'LoopForge 核心规则', description: '通用纪律', projectId: 'p1', shared: false, priority: 110, global: true, workflowIds: ['a', 'b'] },
+    { id: 'core', name: 'Agent 编排平台核心规则', description: '通用纪律', projectId: 'p1', shared: false, priority: 110, global: true, workflowIds: ['a', 'b'] },
     { id: 'go-sql', name: 'Go/SQL', description: '', projectId: 'p1', shared: true, priority: 100 },
     { id: 'tapd', name: 'TAPD 同步', description: '回写约定', projectId: 'p2', shared: true, priority: 80 },
   ],

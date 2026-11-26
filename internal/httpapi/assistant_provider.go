@@ -71,7 +71,7 @@ const assistantCodexGuard = `import json,sys
 event=json.load(sys.stdin)
 name=event.get("tool_name", "")
 if not name.startswith("mcp__agentflow_session__"):
-    print(json.dumps({"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Use the LoopForge session MCP tools; native tools are disabled in Main Bot."}}))
+    print(json.dumps({"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Use the Agent 编排平台 session MCP tools; native tools are disabled in Main Bot."}}))
     sys.exit(2)
 `
 

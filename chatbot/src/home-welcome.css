@@ -40,11 +40,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
   min-width: 0;
   max-width: 100%;
-  /* Balance the small sidebearing remaining in the SVG's visible strokes. */
-  padding-inline-end: 3px;
 }
 
 [data-theme="dark"] .chat-shell.home-shell .home-welcome-lockup {
@@ -52,11 +49,6 @@
   --home-logo-blue: #94a5ff;
   --home-logo-violet: #c29aff;
   --home-logo-highlight: #f0fbff;
-}
-
-.chat-shell.home-shell .home-welcome-lockup > .home-logo {
-  flex: 0 0 auto;
-  margin: 0;
 }
 
 .chat-shell.home-shell .home-welcome-copy {
@@ -249,7 +241,6 @@
     --wordmark-orbit-size: 40px;
     --wordmark-orbit-start-x: -28px;
     --wordmark-orbit-start-y: 24px;
-    gap: 12px;
   }
 
   .chat-shell.home-shell .home-welcome .home-welcome-title {

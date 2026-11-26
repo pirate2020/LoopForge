@@ -35,7 +35,7 @@ export default function ExecutionMachinePicker({ chat, onManage }) {
       : "加载执行机器…"
     : runnerId
       ? machine?.name || runnerId
-      : "LoopForge 云端";
+      : "Agent 编排平台云端";
   const online =
     known &&
     (runnerId
@@ -60,7 +60,7 @@ export default function ExecutionMachinePicker({ chat, onManage }) {
     ? [
         {
           id: "",
-          label: "LoopForge 云端",
+          label: "Agent 编排平台云端",
           icon: "server",
           description:
             chat.cloudPool?.configured && !chat.cloudPool.online

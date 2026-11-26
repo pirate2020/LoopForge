@@ -1520,7 +1520,7 @@ func TestAppendClarificationDescriptionReplacesPreviousBlock(t *testing.T) {
 		t.Fatalf("got %q", got)
 	}
 	got = appendClarificationDescription(got, "第二轮结论")
-	if strings.Count(got, "## LoopForge 澄清结论") != 1 || strings.Contains(got, "第一轮结论") || !strings.Contains(got, "第二轮结论") {
+	if strings.Count(got, "## Agent 编排平台澄清结论") != 1 || strings.Contains(got, "第一轮结论") || !strings.Contains(got, "第二轮结论") {
 		t.Fatalf("replace failed: %q", got)
 	}
 }

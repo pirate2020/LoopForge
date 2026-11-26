@@ -32,7 +32,10 @@ func signupEnabled() bool {
 }
 
 func (h *authHandlers) authSetup(c *gin.Context) {
-	needsSetup := h.repo != nil && h.repo.LocalAccountCount() == 0
+	// The first account may come from password or IAM, and a gateway identity
+	// can create the first user row too. Counting every user keeps the
+	// bootstrap notice consistent and prevents a second "first administrator".
+	needsSetup := h.repo != nil && h.repo.UserCount() == 0
 	c.JSON(http.StatusOK, gin.H{"needsSetup": needsSetup, "signupEnabled": needsSetup || signupEnabled()})
 }
 
@@ -89,7 +92,7 @@ func (h *authHandlers) authRegister(c *gin.Context) {
 		return
 	}
 	registerMu.Lock()
-	first := h.repo.LocalAccountCount() == 0
+	first := h.repo.UserCount() == 0
 	if !first && !signupEnabled() {
 		registerMu.Unlock()
 		c.JSON(http.StatusForbidden, gin.H{"error": "自助注册已关闭，请联系管理员创建账号"})

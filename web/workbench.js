@@ -46,7 +46,7 @@
   let host, slots, timer, composing = false;
 
   function space() { return S.spaces.find(s => s.id === S.activeId) || null; }
-  function person(id) { return S.people[id] || { id, name: id === 'ai' ? 'LoopForge AI' : '成员' }; }
+  function person(id) { return S.people[id] || { id, name: id === 'ai' ? 'Agent 编排平台 AI' : '成员' }; }
   function projectName(id) { return S.projects.find(p => p.id === id)?.name || ''; }
   function currentProject() { return (typeof window.currentProject === 'function' && window.currentProject()?.id) || S.projects[0]?.id || ''; }
 
@@ -200,7 +200,7 @@
     const s = space();
     const near = slots.timeline.scrollHeight - slots.timeline.scrollTop - slots.timeline.clientHeight < 80;
     if (S.booting) { slots.timeline.innerHTML = '<div class="empty-main">正在读取会话…</div>'; return; }
-    if (S.error) { slots.timeline.innerHTML = `<div class="empty-main"><h2>无法连接 LoopForge 后端</h2><p class="muted">${esc(S.error)}</p></div>`; return; }
+    if (S.error) { slots.timeline.innerHTML = `<div class="empty-main"><h2>无法连接 Agent 编排平台后端</h2><p class="muted">${esc(S.error)}</p></div>`; return; }
     if (!s) { slots.timeline.innerHTML = '<div class="empty-main"><h2>还没有可访问的项目</h2></div>'; return; }
     if (!s.messages.length) {
       const prompts = ['帮我做一个能在侧边栏打开的页面 demo', '做一页产品介绍 PPT', '跑一个 SOP，并在旁边看进度', '先帮我把这件事理清楚'];
@@ -283,7 +283,7 @@
         : `<div class="msg-body">${typeof renderMarkdown === 'function' ? renderMarkdown(scrubPaths(parsed.message || '')) : esc(parsed.message).replace(/\n/g, '<br>')}</div>`;
     const drafts = (parsed.drafts || []).map((d, i) => draftCard(d, i, m.id)).join('');
     const copy = m.aiStatus === 'running' ? '' : `<button type="button" class="cx-copy" data-copy="${esc(m.id)}">复制</button>`;
-    return `<div class="cx-agent"><div class="cx-meta"><span>LoopForge</span>${copy}<time>${esc(timeLabel(m.at))}</time></div>${body}${attachmentHTML(m)}${drafts}</div>`;
+    return `<div class="cx-agent"><div class="cx-meta"><span>Agent 编排平台</span>${copy}<time>${esc(timeLabel(m.at))}</time></div>${body}${attachmentHTML(m)}${drafts}</div>`;
   }
 
   function draftCard(d, index, messageId) {
@@ -425,7 +425,7 @@
       sendBtn.title = running ? '停止' : '发送';
     }
     const ta = slots.composer.querySelector('textarea');
-    if (ta && document.activeElement !== ta) ta.placeholder = running ? '发送会打断当前回复' : '给 LoopForge 发消息，或贴一张图';
+    if (ta && document.activeElement !== ta) ta.placeholder = running ? '发送会打断当前回复' : '给 Agent 编排平台发消息，或贴一张图';
     bar.querySelector('.target-toggle')?.classList.toggle('ai', S.toAi);
     bar.querySelector('.target-toggle')?.classList.toggle('people', !S.toAi);
     const t = bar.querySelector('.target-toggle');
@@ -436,7 +436,7 @@
     slots.composer.innerHTML = `
       <div class="composer-wrap"><div class="composer">
         <div class="wb-files" hidden></div>
-        <textarea rows="1" placeholder="给 LoopForge 发消息，或贴一张图"></textarea>
+        <textarea rows="1" placeholder="给 Agent 编排平台发消息，或贴一张图"></textarea>
         <input class="wb-file" type="file" multiple hidden>
         <div class="composer-bar">
           <button class="icon-btn" type="button" data-act="file" title="添加图片或文件">+</button>

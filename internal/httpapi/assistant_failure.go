@@ -113,7 +113,7 @@ func classifyAssistantFailure(ctx context.Context, err error) domain.AssistantFa
 		return f
 	}
 	if errors.Is(err, engine.ErrConversationWorkspaceBound) {
-		f.Code, f.Phase, f.Message, f.Suggestion = "WORKSPACE_BOUND_ELSEWHERE", "setup", "工作区仍绑定在其他 LoopForge 实例，请等待该实例恢复后重试", "请确认持有该工作区的实例仍在线；实例已下线时重试会由当前实例接管。"
+		f.Code, f.Phase, f.Message, f.Suggestion = "WORKSPACE_BOUND_ELSEWHERE", "setup", "工作区仍绑定在其他 Agent 编排平台实例，请等待该实例恢复后重试", "请确认持有该工作区的实例仍在线；实例已下线时重试会由当前实例接管。"
 		return f
 	}
 	if errors.Is(err, engine.ErrConversationWorkspaceLost) {

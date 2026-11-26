@@ -135,8 +135,8 @@ test("a new project drafted inside another project's chat is not shown as belong
       .fields.find(([label]) => label === "SOP")?.[1];
   assert.equal(sopOf({ id: "okr", name: "OKR系统" }), "通用后端交付 SOP（默认）");
   assert.equal(
-    sopOf({ id: "okr", name: "OKR系统" }, [{ type: "sop", id: "generic-backend-delivery", name: "通用后端交付 SOP（LoopForge）" }]),
-    "通用后端交付 SOP（LoopForge）（默认）",
+    sopOf({ id: "okr", name: "OKR系统" }, [{ type: "sop", id: "generic-backend-delivery", name: "通用后端交付 SOP（Agent 编排平台）" }]),
+    "通用后端交付 SOP（Agent 编排平台）（默认）",
   );
   assert.equal(
     sopOf({ id: "okr", name: "OKR系统", workflowId: "generic-frontend-delivery" }, [{ type: "sop", id: "generic-frontend-delivery", name: "通用前端交付 SOP" }]),

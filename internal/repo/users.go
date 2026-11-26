@@ -137,6 +137,45 @@ func (r *UsersRepo) Users() []domain.User {
 	return out
 }
 
+// UserCount is the total number of platform accounts, regardless of how they
+// sign in. It is the authority for first-administrator bootstrap because
+// password, IAM and gateway logins can all create the first user row.
+func (r *UsersRepo) UserCount() int64 {
+	var n int64
+	r.DB.Model(&userRow{}).Count(&n)
+	return n
+}
+
+// CreateUser inserts a profile-only account and never adopts an existing login
+// row. IAM provisioning uses it so a concurrent registration cannot have its
+// account taken over through PutUser's insert-or-adopt behavior.
+func (r *UsersRepo) CreateUser(v domain.User) (domain.User, error) {
+	v.LoginName = strings.TrimSpace(v.LoginName)
+	if v.LoginName == "" {
+		return domain.User{}, errors.New("user loginName is required")
+	}
+	if IsAllowlistedPlatformAdmin(v.LoginName) {
+		v.PlatformRole = domain.PlatformRoleAdmin
+	}
+	now := time.Now().UTC()
+	inserted, err := insertIgnore(r.DB, "users", map[string]any{
+		"staff_id": v.StaffID, "login_name": v.LoginName, "chinese_name": v.ChineseName,
+		"dept_id": v.DeptID, "dept_name": v.DeptName, "platform_role": v.PlatformRole,
+		"created_at": timePtr(now), "updated_at": timePtr(now),
+	})
+	if err != nil {
+		return domain.User{}, err
+	}
+	if !inserted {
+		return domain.User{}, ErrLoginTaken
+	}
+	saved, ok := r.UserByLoginName(v.LoginName)
+	if !ok {
+		return domain.User{}, errors.New("could not read account")
+	}
+	return saved, nil
+}
+
 func (r *UsersRepo) User(id int64) (domain.User, bool) {
 	if id <= 0 {
 		return domain.User{}, false

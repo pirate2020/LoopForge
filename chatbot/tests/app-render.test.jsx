@@ -464,7 +464,7 @@ describe("App", () => {
       expect(trigger.closest(".composer-context")).not.toBeNull();
       trigger.getBoundingClientRect = () => ({ top: 500, bottom: 528, left: 200, right: 400, width: 200, height: 28 });
       await user.click(trigger);
-      await user.click(screen.getByRole("option", { name: /LoopForge 云端/ }));
+      await user.click(screen.getByRole("option", { name: /Agent 编排平台云端/ }));
       expect(selectMachine).toHaveBeenCalledWith("");
       Object.assign(chat, { activeId: "s1", session: { id: "s1", messages: [] } });
       view.rerender(<App />);

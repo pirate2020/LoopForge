@@ -91,7 +91,9 @@ html.lang-enter #bootLoader { display: none !important; }
 .toast-container { top:72px }
 .login-page { display:grid;place-items:center;min-height:100vh;margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,sans-serif }
 .login-card { width:min(420px,calc(100vw - 48px));padding:36px;border:1px solid var(--line);border-radius:20px;background:var(--panel);box-shadow:var(--shadow) }
-.login-card h1 { font-size:28px;letter-spacing:-1px;margin:14px 0 8px }
+.login-card .login-logo { display:block;width:min(280px,100%);height:auto;margin:0 auto 16px }
+.login-card .login-logo + h1 { margin-top:0 }
+.login-card h1 { font-size:28px;letter-spacing:-1px;margin:14px 0 8px;text-align:center }
 .login-card>p,.login-help { color:var(--muted) }
 .login-card label { display:grid;gap:8px;margin:20px 0;font-size:14px }
 .login-card input { width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--panel-2);color:var(--text);font:inherit }
@@ -99,11 +101,16 @@ html.lang-enter #bootLoader { display: none !important; }
 .login-card button[type="submit"] { width:100%;padding:12px }
 .login-preferences { display:flex;align-items:center;gap:18px;border-top:1px solid var(--line);padding-top:20px;font-size:13px }
 .login-preferences > button { border:0;background:none;color:var(--muted);cursor:pointer;padding:0 }
+.login-preferences #loginTheme { margin-left:auto }
 .login-preferences a { margin-left:auto;color:var(--blue);text-decoration:none }
 #loginError { color:var(--red);min-height:18px;font-size:13px }
 .login-card [hidden] { display:none!important }
 .login-card .login-setup { padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--blue) 10%,transparent);color:var(--text);font-size:13px }
 .login-card .login-rule { margin:-12px 0 0;font-size:12px;color:var(--muted) }
+.login-card .login-iam { width:100%;box-sizing:border-box;margin-top:20px;padding:12px }
+.login-card .login-other { display:flex;align-items:center;gap:12px;width:100%;margin:18px 0 0;padding:0;border:0;background:none;color:var(--muted);font:inherit;font-size:12px;cursor:pointer }
+.login-card .login-other::before,.login-card .login-other::after { content:"";flex:1;border-top:1px solid var(--line) }
+.login-card .login-other:hover { color:var(--blue) }
 .login-link { border:0;background:none;padding:0;color:var(--blue);font:inherit;cursor:pointer }
 .login-link:hover { text-decoration:underline }
 @media(max-width:800px){html[data-lang="en"] .platform-sidebar{width:100%}}

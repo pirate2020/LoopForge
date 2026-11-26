@@ -23,6 +23,7 @@ import (
 	"agentflow/internal/config"
 	"agentflow/internal/domain"
 	"agentflow/internal/engine"
+	"agentflow/internal/iam"
 	"agentflow/internal/knowledge"
 	"agentflow/internal/mcpserver"
 	"agentflow/internal/notification"
@@ -126,6 +127,9 @@ func NewWithNotificationsAndBackground(ctx context.Context, s *repo.Store, e *en
 
 func newWithNotifications(s *repo.Store, e *engine.Engine, syncSvc *tracker.Service, basicUser, basicPass string, notifications *notification.Service, bg *Background, startBackground func(*assistantHandlers, *runsHandlers)) *gin.Engine {
 	d := &deps{repo: s, engine: e, sync: syncSvc, authClient: auth.NewClientFromEnv(), passwordAttempts: newPasswordLimiter()}
+	if iamCfg := iam.ConfigFromEnv(); iamCfg.PartiallyConfigured() && !iamCfg.Enabled() {
+		log.Printf("warning: OAuth2 SSO is partially configured and disabled: %v", iamCfg.Validate())
+	}
 	if trustGatewayIdentityHeaders() && strings.TrimSpace(os.Getenv("AGENTFLOW_IDENTITY_HEADER_SECRET")) == "" {
 		log.Printf("warning: AGENTFLOW_TRUST_IDENTITY_HEADERS is on without AGENTFLOW_IDENTITY_HEADER_SECRET; any loopback caller without forwarding headers, including a proxy that passes client headers through, can sign in as any user")
 	}
@@ -249,6 +253,9 @@ func newWithNotifications(s *repo.Store, e *engine.Engine, syncSvc *tracker.Serv
 	g.GET("/api/auth/gongfeng", api.auth.gongfengOAuthStatus)
 	g.GET("/api/auth/gongfeng/start", api.auth.gongfengOAuthStart)
 	g.GET("/api/auth/gongfeng/callback", api.auth.gongfengOAuthCallback)
+	g.GET("/api/auth/iam", api.auth.iamStatus)
+	g.GET("/api/auth/iam/start", api.auth.iamStart)
+	g.GET("/api/auth/iam/callback", api.auth.iamCallback)
 	g.GET("/api/auth/github", api.github.status)
 	g.PUT("/api/auth/github/config", api.github.configure)
 	g.POST("/api/auth/github/device", api.github.start)

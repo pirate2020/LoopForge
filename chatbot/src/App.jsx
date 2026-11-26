@@ -1251,14 +1251,14 @@ export default function App() {
         <button
           className="brand-home"
           onClick={startNewChat}
-          aria-label="LoopForge 首页"
+          aria-label="Agent 编排平台首页"
           inert={!sidebar}
           aria-hidden={!sidebar || undefined}
         >
           <span className="brand-icon">
             <HarnessIcon name="workflow" size={20} />
           </span>
-          <strong>LoopForge</strong>
+          <strong>Agent 编排平台</strong>
         </button>
         <IconButton
           className="sidebar-toggle"

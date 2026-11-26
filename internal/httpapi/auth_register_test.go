@@ -20,6 +20,9 @@ func TestRegisterFirstAccountBecomesAdminAndSignupToggle(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(s.Close)
+	if err := s.DB.Exec("DELETE FROM users").Error; err != nil {
+		t.Fatal(err)
+	}
 	h := New(s, engine.New(s, runtime.NewManager(t.TempDir())), nil, "", "")
 	call := func(method, path, origin, body string) *httptest.ResponseRecorder {
 		r := httptest.NewRequest(method, "http://localhost"+path, bytes.NewBufferString(body))

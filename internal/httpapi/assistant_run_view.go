@@ -105,27 +105,27 @@ var assistantCredentialRules = []struct {
 	steps        []string
 }{
 	{"codexApiKey", "Codex API Key", regexp.MustCompile(`(?i)Codex[^。\n]{0,16}API Key`), "", []string{
-		"到 LoopForge「个人配置 → Codex API Key」填写 Key（及 Base URL）并保存，或把执行机器的认证方式切回本机登录",
+		"到 Agent 编排平台「个人配置 → Codex API Key」填写 Key（及 Base URL）并保存，或把执行机器的认证方式切回本机登录",
 		"回到运行重试失败节点",
 	}},
 	{"claudeCodeApiKey", "Claude Code API Key", regexp.MustCompile(`(?i)Claude Code[^。\n]{0,16}API Key`), "", []string{
-		"到 LoopForge「个人配置 → Claude Code API Key」填写 Key（及 Base URL）并保存，或把执行机器的认证方式切回本机登录",
+		"到 Agent 编排平台「个人配置 → Claude Code API Key」填写 Key（及 Base URL）并保存，或把执行机器的认证方式切回本机登录",
 		"回到运行重试失败节点",
 	}},
 	{"codeBuddyApiKey", "CodeBuddy API Key", regexp.MustCompile(`(?i)CodeBuddy[^。\n]{0,20}(API Key|Key|凭据)|拒绝了你的 API Key`), "https://www.codebuddy.ai/profile/keys", []string{
 		"确认 CodeBuddy 账号所在站点并在该站点创建 API Key：国际站 https://www.codebuddy.ai/profile/keys ，国内站 https://copilot.tencent.com/profile/ ，iOA https://tencent.sso.copilot.tencent.com/profile/keys",
-		"到 LoopForge「个人配置 → CodeBuddy API Key」选择同一网络环境，粘贴 Key 并保存；DeepSeek、OpenAI 等第三方模型的 Key 不能用作 CodeBuddy Key",
+		"到 Agent 编排平台「个人配置 → CodeBuddy API Key」选择同一网络环境，粘贴 Key 并保存；DeepSeek、OpenAI 等第三方模型的 Key 不能用作 CodeBuddy Key",
 		"回到运行重试失败节点",
 	}},
 	{"gitSshKey", "Git SSH 密钥", regexp.MustCompile(`Git SSH (密钥|私钥)`), "", []string{
 		"把公钥添加到代码托管账号，并按需授予仓库写权限",
-		"到 LoopForge「个人配置 → Git SSH 密钥」为该主机添加无口令私钥，同一主机的仓库自动共用",
+		"到 Agent 编排平台「个人配置 → Git SSH 密钥」为该主机添加无口令私钥，同一主机的仓库自动共用",
 		"请管理员信任仓库的 SSH 主机，然后重试",
 	}},
 	{"gitToken", "GitHub Git Token", regexp.MustCompile(`(?i)Git Token|工蜂[^。\n]{0,12}令牌|could not read Username|Authentication failed|HTTP Basic: Access denied|terminal prompts disabled|requested URL returned error: 40[13]`), "https://github.com/settings/tokens", []string{
 		"打开 GitHub「Settings → Developer settings → Personal access tokens」新建令牌",
 		"为目标仓库授予 Contents 和 Pull requests 的读写权限，创建后立即复制 token",
-		"到 LoopForge「个人配置 → GitHub Git Token」粘贴，点「校验」，通过后自动保存",
+		"到 Agent 编排平台「个人配置 → GitHub Git Token」粘贴，点「校验」，通过后自动保存",
 		"回到运行重试失败节点",
 	}},
 }
